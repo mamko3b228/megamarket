@@ -7,7 +7,7 @@ const merchantId = 90492
 const CHAT_ID = ''
 const TG_BOT_TOKEN = ''
 const PROMO = ''
-SBM_TOKEN = ''
+const SBM_TOKEN = ''
 
 const inputField = {
     value: `{"items":[{"offer":{"merchantId": "${merchantId}" },"goods":{"goodsId": "${goodId}" },"quantity":1}],"cartInfo":{"type":"CART_TYPE_DEFAULT","locationId":""}}`

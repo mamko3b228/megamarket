@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const CHAT_ID = ''
 const TG_BOT_TOKEN = ''
 const PROMO = ''
-SBM_TOKEN = ''
+const SBM_TOKEN = ''
 
 async function buyGoodOnMegaMarket() {
     const browser = await puppeteer.launch({headless: false});

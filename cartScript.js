@@ -1,7 +1,7 @@
 const CHAT_ID = ''
 const TG_BOT_TOKEN = ''
 const PROMO = ''
-SBM_TOKEN = ''
+const SBM_TOKEN = ''
 
 const handleTextFieldSubmit = async (inputField) => {
     const trimmedText = inputField.value.trim();
