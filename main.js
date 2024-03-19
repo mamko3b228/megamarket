@@ -1,4 +1,8 @@
 const puppeteer = require('puppeteer');
+const CHAT_ID = ''
+const TG_BOT_TOKEN = ''
+const PROMO = ''
+SBM_TOKEN = ''
 
 async function buyGoodOnMegaMarket() {
     const browser = await puppeteer.launch({headless: false});
@@ -9,8 +13,8 @@ async function buyGoodOnMegaMarket() {
 
         // const token = input()
             
-        document.cookie = 'sbermegamarket_token=942fb5d1-4367-449e-afda-189581daa2f8';
-        document.cookie = 'ecom_token=942fb5d1-4367-449e-afda-189581daa2f8';
+        document.cookie = `sbermegamarket_token=${SBM_TOKEN}`;
+        document.cookie = `ecom_token=${SBM_TOKEN}`;
 
         //JS script for checkout
         const handleTextFieldSubmit = async (inputField) => {
@@ -30,9 +34,8 @@ async function buyGoodOnMegaMarket() {
         };
 
         async function sendTelegramMessage(message) {
-            const telegramBotToken = '6409007829:AAH-IgR14WYWgr7tg8a_YYk4u7eTcdDvoJA';
-            // const chatId = '5038035009';
-            const chatId = '627967659'
+            const telegramBotToken = TG_BOT_TOKEN;
+            const chatId = CHAT_ID
             const apiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
             const requestBody = {
                 chat_id: chatId,
@@ -81,7 +84,7 @@ async function buyGoodOnMegaMarket() {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Cookie": 'sbermegamarket_token=942fb5d1-4367-449e-afda-189581daa2f8; ecom_token=942fb5d1-4367-449e-afda-189581daa2f8',
+                        "Cookie": `sbermegamarket_token=${SBM_TOKEN}; ecom_token=${SBM_TOKEN}`,
                         "Sec-Fetch-Mode": "cors",
                     },
                     body: JSON.stringify(requestBody)
@@ -114,8 +117,8 @@ async function buyGoodOnMegaMarket() {
                 "isSelectedCartItemGroupsOnly": true,
                 "deliveryType": "COURIER",
                 "address": {
-                    "addressFull": "г Москва, ул Перерва, д 43",
-                    "addressId": "6955b1c8-bfdc-4b09-ab58-6c1e1c3a6aa2#43#"
+                    "addressFull": "",
+                    "addressId": ""
                 },
                 "auth": {
                     "locationId": "50",
@@ -155,23 +158,21 @@ async function buyGoodOnMegaMarket() {
                 "identification": { "id": cartId },
                 "deliveryType": "COURIER",
                 "paymentType": "CARD_ONLINE",
-                "customer": { "notMe": false, "thirdName": "", "comment": "", "firstName": "Антон", "lastName": "Могилев", "email": "anton228mogila@icloud.com", "phone": "79777088079", "phoneMisc": "", "restored": false },
+                "customer": { "notMe": false, "thirdName": "", "comment": "", "firstName": "", "lastName": "", "email": "", "phone": "", "phoneMisc": "", "restored": false },
                 "address": {
-                    "addressId": "6955b1c8-bfdc-4b09-ab58-6c1e1c3a6aa2#43#",
-                    "full": "г Москва, ул Перерва, д 43",
+                    "addressId": "",
+                    "full": "",
                     "entrance": "", "intercom": "",
-                    "floor": "13",
-                    "flat": "110",
+                    "floor": "",
+                    "flat": "",
                     "addToMyAddresses": false
                 },
                 "deliveries": [{ "id": variantId, "shipmentType": 0, "date": date, "timeSlot": { "from": timeSlotFrom, "to": timeSlotTo } }],
                 "flags": ["GOA_AGREEMENT"],
                 "isSelectedCartItemGroupsOnly": true,
-                "discounts": [{ "type": "PROMO_CODE", "voucher": "Мурмур" }], // ввод промокода
+                "discounts": [{ "type": "PROMO_CODE", "voucher": PROMO }], 
                 "paymentTypeOptions": [],
-                // "additionalData":{"adspire":{"type":"desktop","atmMarketing":"","atmRemarketing":"","atmCloser":""},
-                // "digitalDataUserAnonymousId":"12f14bf0-9de1-11ee-85a3-8fa92af9be58","yandexCid":"1702930050368470521","googleAnalyticsClientId":"307229753.1702930051"},
-                // "orderOptions":[],"auth":{"locationId":"50","appPlatform":"WEB","appVersion":1707393661}
+
             }
 
             try {
@@ -184,8 +185,7 @@ async function buyGoodOnMegaMarket() {
                 }
 
                 const responseData = await response.json();
-                // console.log("Response:", responseData.errors);
-                // console.log("Response:", responseData);
+
                 return responseData;
             } catch (error) {
                 console.error("Error:", error.message);
@@ -195,14 +195,12 @@ async function buyGoodOnMegaMarket() {
         }
 
         const inputField = {
-            value: `{"items":[{"offer":{"merchantId":40440},"goods":{"goodsId":"100060825481"},"quantity":1}],"cartInfo":{"type":"CART_TYPE_DEFAULT","locationId":""}}`
+            value: `{"items":[{"offer":{"merchantId":40440},"goods":{"goodsId":"100063319348"},"quantity":1}],"cartInfo":{"type":"CART_TYPE_DEFAULT","locationId":""}}`
         };
 
-        // Вызываем функцию start
         async function start() {
             try {
-                // const token = '942fb5d1-4367-449e-afda-189581daa2f8'
-                // setCookie(token)
+
                 const { cartId, bonusInfo, percentOfBonusInfo } = await handleTextFieldSubmit(inputField);
                 const { variantId, date, timeSlotFrom, timeSlotTo, price, quantity } = await getDateForCheckout(cartId);
                 const responseData = await checkout(cartId, variantId, date, timeSlotFrom, timeSlotTo, price, quantity);
@@ -219,7 +217,7 @@ async function buyGoodOnMegaMarket() {
 
         return start();
     });
-    // await browser.close();
+
 };
 
 buyGoodOnMegaMarket()

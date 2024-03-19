@@ -1,3 +1,8 @@
+const CHAT_ID = ''
+const TG_BOT_TOKEN = ''
+const PROMO = ''
+SBM_TOKEN = ''
+
 const handleTextFieldSubmit = async (inputField) => {
     const trimmedText = inputField.value.trim();
     if (trimmedText !== '') {
@@ -15,9 +20,8 @@ const handleTextFieldSubmit = async (inputField) => {
 };
 
 async function sendTelegramMessage(message) {
-    const telegramBotToken = '6409007829:AAH-IgR14WYWgr7tg8a_YYk4u7eTcdDvoJA';
-    // const chatId = '5038035009';
-    const chatId = 627967659
+    const telegramBotToken = TG_BOT_TOKEN;
+    const chatId = CHAT_ID
     const apiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
     const requestBody = {
         chat_id: chatId,
@@ -67,7 +71,7 @@ const addToCartRequest = async (items, cartType, locationId) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Cookie": 'sbermegamarket_token=942fb5d1-4367-449e-afda-189581daa2f8; ecom_token=942fb5d1-4367-449e-afda-189581daa2f8',
+                "Cookie": `sbermegamarket_token=${SBM_TOKEN}; ecom_token=${SBM_TOKEN}`, 
                 "Sec-Fetch-Mode": "cors",
             },
             body: JSON.stringify(requestBody)
@@ -91,41 +95,6 @@ const addToCartRequest = async (items, cartType, locationId) => {
     }
 };
 
-// const cartId = await addToCartRequest(items, cartType, locationId);
-// console.log("Cart ID:", cartId);
-
-// async function getDateForCheckout(cartId) {
-//     const url = 'https://megamarket.ru/api/mobile/v2/checkoutService/checkout/calculate'
-//     const requestBody = {
-//         "identification":{"id":cartId},
-//         "isSelectedCartItemGroupsOnly":true,
-//         "deliveryType":"COURIER",
-//         "address":{"addressFull":"г Москва, ул Перерва, д 43",
-//         "addressId":"6955b1c8-bfdc-4b09-ab58-6c1e1c3a6aa2#43#"},
-//         "auth":{"locationId":"50","appPlatform":"WEB","appVersion":1707393661}
-//     }
-
-//     try {
-//         const response = await fetch(url, {
-//             method: "POST",
-//             body: JSON.stringify(requestBody)
-//         });
-//         if (!response.ok) {
-//             throw new Error("Network response was not ok");
-//         }
-
-//         const deliveryDate = await response.json();
-
-//         // if responseData.
-//         console.log("Response:", deliveryDate.AONEItem.variants[0].arrival.id);
-//         console.log(deliveryDate)
-//         return deliveryDate;
-//     } catch (error) {
-//         console.error("Error:", error.message);
-//         throw error;
-//     }
-// }
-
 async function getDateForCheckout(cartId) {
     const url = 'https://megamarket.ru/api/mobile/v2/checkoutService/checkout/calculate';
     const requestBody = {
@@ -135,8 +104,8 @@ async function getDateForCheckout(cartId) {
         "isSelectedCartItemGroupsOnly": true,
         "deliveryType": "COURIER",
         "address": {
-            "addressFull": "г Москва, ул Перерва, д 43",
-            "addressId": "6955b1c8-bfdc-4b09-ab58-6c1e1c3a6aa2#43#"
+            "addressFull": "",
+            "addressId": ""
         },
         "auth": {
             "locationId": "50",
@@ -177,24 +146,20 @@ async function checkout(cartId, variantId, date, timeSlotFrom, timeSlotTo, price
         "identification": { "id": cartId },
         "deliveryType": "COURIER",
         "paymentType": "CARD_ONLINE",
-        "customer": { "notMe": false, "thirdName": "", "comment": "", "firstName": "Антон", "lastName": "Могилев", "email": "anton228mogila@icloud.com", "phone": "79777088079", "phoneMisc": "", "restored": false },
+        "customer": { "notMe": false, "thirdName": "", "comment": "", "firstName": "", "lastName": "", "email": "", "phone": "", "phoneMisc": "", "restored": false },
         "address": {
-            "addressId": "6955b1c8-bfdc-4b09-ab58-6c1e1c3a6aa2#43#",
-            "full": "г Москва, ул Перерва, д 43",
+            "addressId": "",
+            "full": "",
             "entrance": "", "intercom": "",
-            "floor": "13",
-            "flat": "110",
+            "floor": "",
+            "flat": "",
             "addToMyAddresses": false
         },
-        // "deliveries": [{ "id": "067ea15c4ee7a06cd387f5f7038bad18", "shipmentType": 0, "date": "2024-02-14", "timeSlot": { "from": "08:00", "to": "23:00" } }],
         "deliveries": [{ "id": variantId, "shipmentType": 0, "date": date, "timeSlot": { "from": timeSlotFrom, "to": timeSlotTo } }],
         "flags": ["GOA_AGREEMENT"],
         "isSelectedCartItemGroupsOnly": true,
         "discounts": [{ "type": "PROMO_CODE", "voucher": "Сельдь" }], // ПОЧИНИТЬ
         "paymentTypeOptions": [],
-        // "additionalData":{"adspire":{"type":"desktop","atmMarketing":"","atmRemarketing":"","atmCloser":""},
-        // "digitalDataUserAnonymousId":"12f14bf0-9de1-11ee-85a3-8fa92af9be58","yandexCid":"1702930050368470521","googleAnalyticsClientId":"307229753.1702930051"},
-        // "orderOptions":[],"auth":{"locationId":"50","appPlatform":"WEB","appVersion":1707393661}
     }
 
     try {
@@ -207,8 +172,6 @@ async function checkout(cartId, variantId, date, timeSlotFrom, timeSlotTo, price
         }
 
         const responseData = await response.json();
-        // console.log("Response:", responseData.errors);
-        // console.log("Response:", responseData);
         return responseData;
     } catch (error) {
         console.error("Error:", error.message);
@@ -221,8 +184,6 @@ const inputField = {
     value: '{"items":[{"offer":{"merchantId":40440},"goods":{"goodsId":"100040565857"},"quantity":1}],"cartInfo":{"type":"CART_TYPE_DEFAULT","locationId":""}}'
 };
 
-// handleTextFieldSubmit(inputField)
-
 async function start() {
     try {
         const { cartId, bonusInfo, percentOfBonusInfo } = await handleTextFieldSubmit(inputField);
@@ -232,7 +193,6 @@ async function start() {
         if (responseData.success == true) {
             sendTelegramMessage(`✅✅✅Новый заказ МегаМаркет✅✅✅\n\nСумма: ${price}\nКоличество: ${quantity}\nКоличество бонусов: ${bonusInfo}\nПроценты: ${percentOfBonusInfo}`);
         } else {
-            // console.log("Response:", responseData.errors);
             sendTelegramMessage(`Ошибка: ${responseData.errors}`);
         }
     } catch (error) {

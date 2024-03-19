@@ -2,7 +2,16 @@ const puppeteer = require('puppeteer');
 let previousPrice = null;
 let previousBonusPercent = null;
 let previousBonusQuantity = null;
-let voucher = ""
+const goodId = 100063054457
+const merchantId = 90492
+const CHAT_ID = ''
+const TG_BOT_TOKEN = ''
+const PROMO = ''
+SBM_TOKEN = ''
+
+const inputField = {
+    value: `{"items":[{"offer":{"merchantId": "${merchantId}" },"goods":{"goodsId": "${goodId}" },"quantity":1}],"cartInfo":{"type":"CART_TYPE_DEFAULT","locationId":""}}`
+};
 
 async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
     const browser = await puppeteer.launch({ headless: false });
@@ -11,14 +20,9 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
 
     await page.evaluate((goodId, merchantId, voucher) => {
 
-        // const token = input()
+        document.cookie = `sbermegamarket_token=${SBM_TOKEN}`;
+        document.cookie = `ecom_token=${SBM_TOKEN}`;
 
-        document.cookie = 'sbermegamarket_token=942fb5d1-4367-449e-afda-189581daa2f8';
-        document.cookie = 'ecom_token=942fb5d1-4367-449e-afda-189581daa2f8';
-
-        // const goodData = await parseGoods(goodId, merchant);
-
-        //JS script for checkout
         const handleTextFieldSubmit = async (inputField) => {
             const trimmedText = inputField.value.trim();
             if (trimmedText !== '') {
@@ -37,9 +41,9 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
         };
 
         async function sendTelegramMessage(message) {
-            const telegramBotToken = '6409007829:AAH-IgR14WYWgr7tg8a_YYk4u7eTcdDvoJA';
-            // const chatId = '5038035009';
-            const chatId = '627967659'
+
+            const telegramBotToken = TG_BOT_TOKEN;
+            const chatId = CHAT_ID;
             const apiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
             const requestBody = {
                 chat_id: chatId,
@@ -89,7 +93,7 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Cookie": 'sbermegamarket_token=942fb5d1-4367-449e-afda-189581daa2f8; ecom_token=942fb5d1-4367-449e-afda-189581daa2f8',
+                        "Cookie": `sbermegamarket_token=${SBM_TOKEN}; ecom_token=${SBM_TOKEN}`,
                         "Sec-Fetch-Mode": "cors",
                     },
                     body: JSON.stringify(requestBody)
@@ -101,7 +105,6 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
                 const responseData = await response.json();
                 console.log("Cart Data:", responseData);
 
-                // Сохраняем и возвращаем id из ответа
                 const cartId = responseData.identification.id;
                 const bonusInfo = responseData.itemGroups[0].cashBonusInfo.chargedBonus
                 const percentOfBonusInfo = responseData.itemGroups[0].cashBonusInfo.chargedBonusPercent
@@ -122,8 +125,8 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
                 "isSelectedCartItemGroupsOnly": true,
                 "deliveryType": "COURIER",
                 "address": {
-                    "addressFull": "г Москва, ул Перерва, д 43",
-                    "addressId": "6955b1c8-bfdc-4b09-ab58-6c1e1c3a6aa2#43#"
+                    "addressFull": "",
+                    "addressId": ""
                 },
                 "auth": {
                     "locationId": "50",
@@ -163,23 +166,20 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
                 "identification": { "id": cartId },
                 "deliveryType": "COURIER",
                 "paymentType": "CARD_ONLINE",
-                "customer": { "notMe": false, "thirdName": "", "comment": "", "firstName": "Антон", "lastName": "Могилев", "email": "anton228mogila@icloud.com", "phone": "79777088079", "phoneMisc": "", "restored": false },
+                "customer": { "notMe": false, "thirdName": "", "comment": "", "firstName": "", "lastName": "", "email": "", "phone": "", "phoneMisc": "", "restored": false },
                 "address": {
-                    "addressId": "6955b1c8-bfdc-4b09-ab58-6c1e1c3a6aa2#43#",
-                    "full": "г Москва, ул Перерва, д 43",
+                    "addressId": "",
+                    "full": "",
                     "entrance": "", "intercom": "",
-                    "floor": "13",
-                    "flat": "110",
+                    "floor": "",
+                    "flat": "",
                     "addToMyAddresses": false
                 },
                 "deliveries": [{ "id": variantId, "shipmentType": 0, "date": date, "timeSlot": { "from": timeSlotFrom, "to": timeSlotTo } }],
                 "flags": ["GOA_AGREEMENT"],
                 "isSelectedCartItemGroupsOnly": true,
-                "discounts": [{ "type": "PROMO_CODE", "voucher": voucher }], // ввод промокода
+                "discounts": [{ "type": "PROMO_CODE", "voucher": PROMO }], 
                 "paymentTypeOptions": [],
-                // "additionalData":{"adspire":{"type":"desktop","atmMarketing":"","atmRemarketing":"","atmCloser":""},
-                // "digitalDataUserAnonymousId":"12f14bf0-9de1-11ee-85a3-8fa92af9be58","yandexCid":"1702930050368470521","googleAnalyticsClientId":"307229753.1702930051"},
-                // "orderOptions":[],"auth":{"locationId":"50","appPlatform":"WEB","appVersion":1707393661}
             }
 
             try {
@@ -192,8 +192,6 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
                 }
 
                 const responseData = await response.json();
-                // console.log("Response:", responseData.errors);
-                // console.log("Response:", responseData);
                 return responseData;
             } catch (error) {
                 console.error("Error:", error.message);
@@ -202,16 +200,9 @@ async function buyGoodOnMegaMarket(goodId, merchantId, voucher) {
 
         }
 
-        const inputField = {
-            value: `{"items":[{"offer":{"merchantId": "${merchantId}" },"goods":{"goodsId": "${goodId}" },"quantity":1}],"cartInfo":{"type":"CART_TYPE_DEFAULT","locationId":""}}`
-            // {"items":[{"offer":{"merchantId":${merchantId}},"goods":{"goodsId":${goodId}},"quantity":1}],"cartInfo":{"type":"CART_TYPE_DEFAULT","locationId":""}}
-        };
 
-        // Вызываем функцию start
         async function start() {
             try {
-                // const token = '942fb5d1-4367-449e-afda-189581daa2f8'
-                // setCookie(token)
                 const { cartId, bonusInfo, percentOfBonusInfo } = await handleTextFieldSubmit(inputField);
                 const { variantId, date, timeSlotFrom, timeSlotTo, price, quantity } = await getDateForCheckout(cartId);
                 const responseData = await checkout(cartId, variantId, date, timeSlotFrom, timeSlotTo, price, quantity);
@@ -265,10 +256,6 @@ async function parseGoods(goodId, merchantId) {
         previousBonusPercent = percentOfBonuses;
         previousBonusQuantity = quantityOfBonuses;
 
-        // const goodData = { goodId, merchantId }
-        // // console.log("DANNIE: ", goodId, merchantId)
-        // return goodData
-
     } catch (error) {
         console.error('An error occurred:', error);
     } finally {
@@ -277,9 +264,8 @@ async function parseGoods(goodId, merchantId) {
 }
 
 async function sendTelegramMessage(message) {
-    const telegramBotToken = '6409007829:AAH-IgR14WYWgr7tg8a_YYk4u7eTcdDvoJA';
-    // const chatId = '5038035009';
-    const chatId = '627967659';
+    const telegramBotToken = TG_BOT_TOKEN;
+    const chatId = CHAT_ID;
     const apiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
     const requestBody = {
         chat_id: chatId,
@@ -305,53 +291,26 @@ async function sendTelegramMessage(message) {
     }
 }
 
-
-const goodId = 100063054457
-const merchantId = 90492
-// parseGoods(goodId, merchant)
-
 async function parseGoodsContinuously(goodId, merchantId) {
-    // Ваш бесконечный цикл
     while (true) {
         try {
-            // Вызываем вашу функцию parseGoods
             await parseGoods(goodId, merchantId);
         } catch (error) {
             console.error('An error occurred:', error);
         }
 
-        // Задержка перед следующим вызовом, чтобы избежать блокировки браузера
-        await new Promise(resolve => setTimeout(resolve, 3600000)); // Например, задержка в 10 секунд
+        // Задержка перед следующим вызовом
+        await new Promise(resolve => setTimeout(resolve, 3600000)); // задержка в 10 секунд
     }
 
 }
 
-// Запускаем функцию parseGoodsContinuously с вашими параметрами
-// parseGoodsContinuously(goodId, merchant);
-
-// if (parseGoodsContinuously != null) {
-//     buyGoodOnMegaMarket(goodId, merchantId);
-// }
-
-// parseGoods(goodId, merchantId)
-//     .then(() => {
-//         // Once goods are parsed, initiate the buying process
-//         buyGoodOnMegaMarket(goodId, merchantId);
-//     })
-//     .catch(error => {
-//         console.error('An error occurred while parsing goods:', error);
-//     });
-
-
 async function startMonitor() {
     const parsedData = await parseGoodsContinuously(goodId, merchantId);
 
-    // Check if parsedData is not empty
     if (parsedData) {
-        // If parsedData is not empty, call buyGoodOnMegaMarket function
         await buyGoodOnMegaMarket(goodId, merchantId);
     } else {
-        // If parsedData is empty, log a message
         console.log('parseGoodsContinuously returned empty data. Skipping buyGoodOnMegaMarket call.');
     }
 }
